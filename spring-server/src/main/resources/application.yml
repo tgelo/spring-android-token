@@ -16,3 +16,5 @@ spring:
 liquibase.change-log: classpath:db/changelog/db.changelog.xml
 logging:
   level: info
+ehcache:
+  time-to-live: 30

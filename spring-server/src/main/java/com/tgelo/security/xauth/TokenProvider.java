@@ -1,10 +1,7 @@
 package com.tgelo.security.xauth;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
-import org.springframework.scheduling.annotation.Scheduled;
+import org.ehcache.Cache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.codec.Hex;
@@ -17,10 +14,8 @@ import java.util.UUID;
 @Service
 public class TokenProvider {
 
-    private static final Cache
-        restApiAuthTokenCache =
-        CacheManager.getInstance().getCache("restApiAuthTokenCache");
-    public static final int HALF_AN_HOUR_IN_MILLISECONDS = 30 * 60 * 1000;
+    @Autowired
+    private Cache<String, TokenAndAuthentication> cache;
 
     public String createToken(String userName) {
         return userName + ":" + computeSignature(userName);
@@ -53,46 +48,27 @@ public class TokenProvider {
         return parts[0];
     }
 
-    @Scheduled(fixedRate = HALF_AN_HOUR_IN_MILLISECONDS)
-    public void evictExpiredTokens() {
-        restApiAuthTokenCache.evictExpiredElements();
-    }
-
     public void store(String token, Authentication authentication) {
         String userName = getUserNameFromToken(token);
-        restApiAuthTokenCache
-            .put(new Element(userName, new TokenAndAuthentication(token, authentication)));
+        cache.put(userName, new TokenAndAuthentication(token, authentication));
     }
 
     public boolean validateToken(String token) {
         String userName = getUserNameFromToken(token);
-        if (!restApiAuthTokenCache.isKeyInCache(userName)) {
-            return false;
+        if (cache.containsKey(userName)) {
+            TokenAndAuthentication
+                tokenAndAuthentication = cache.get(userName);
+            return tokenAndAuthentication.getToken().equals(token);
         }
-        TokenAndAuthentication
-            tokenAndAuthentication =
-            (TokenAndAuthentication) restApiAuthTokenCache.get(userName).getObjectValue();
-        return tokenAndAuthentication.token.equals(token);
+        return false;
     }
 
     public UsernamePasswordAuthenticationToken retrieve(String token) {
         String username = getUserNameFromToken(token);
         TokenAndAuthentication
-            tokenAndAuthentication =
-            (TokenAndAuthentication) restApiAuthTokenCache.get(username)
-                .getObjectValue();
-        return (UsernamePasswordAuthenticationToken) tokenAndAuthentication.authentication;
+            tokenAndAuthentication = cache.get(username);
+        return (UsernamePasswordAuthenticationToken) tokenAndAuthentication.getAuthentication();
     }
 
-
-    private class TokenAndAuthentication {
-        private String token;
-        private Authentication authentication;
-
-        TokenAndAuthentication(String token, Authentication authentication) {
-            this.token = token;
-            this.authentication = authentication;
-        }
-    }
 
 }

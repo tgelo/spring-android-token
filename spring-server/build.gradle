@@ -12,7 +12,6 @@ buildscript {
     }
 }
 
-
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
@@ -39,7 +38,7 @@ dependencies {
     compile 'org.liquibase:liquibase-core:3.5.3'
 
     //Ehcache
-    compile "net.sf.ehcache:ehcache:2.10.3"
+    compile group: 'org.ehcache', name: 'ehcache', version: '3.2.0'
 
     // Test dependencies
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-3'

@@ -1,5 +1,6 @@
 package com.tgelo.security.xauth
 
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -85,6 +86,7 @@ class TokenProviderSpec extends Specification {
             e.getMessage() == "Token has wrong format"
     }
 
+    @Ignore
     def "Should return false when cache doesn't contain token"() {
         given:
             String token = "admin:600af495f01c54a2adade8b3e73856d5"
