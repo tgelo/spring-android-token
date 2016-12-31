@@ -36,7 +36,7 @@ class XAuthTokenControllerSpec extends Specification {
             String password = "admin"
 
             CredentialsDTO credentials = new CredentialsDTO()
-            credentials.userName = userName
+            credentials.username = userName
             credentials.password = password
             tokenProvider.createToken(userName) >> "admin:52b213a361ebd2cc1b6dc971b0c76766"
             Gson gson = new Gson();

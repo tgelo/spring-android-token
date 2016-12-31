@@ -42,16 +42,16 @@ public class XAuthTokenController {
 
         UsernamePasswordAuthenticationToken
             authenticationToken =
-            new UsernamePasswordAuthenticationToken(credentialsDTO.getUserName(),
+            new UsernamePasswordAuthenticationToken(credentialsDTO.getUsername(),
                 credentialsDTO.getPassword());
         Authentication
             authentication =
             this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = tokenProvider.createToken(credentialsDTO.getUserName());
+        String token = tokenProvider.createToken(credentialsDTO.getUsername());
         tokenProvider.store(token, authenticationToken);
-        log.debug("User " + credentialsDTO.getUserName() + "authorised correctly");
+        log.debug("User " + credentialsDTO.getUsername() + "authorised correctly");
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 }
