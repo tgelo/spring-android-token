@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #Authenticate
 TOKEN=$(curl -H "Content-Type: application/json" -X POST -d '{"username":"admin","password":"admin"}' http://localhost:8080/api/authenticate)
 echo "-----"

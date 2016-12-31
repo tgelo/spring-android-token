@@ -72,7 +72,7 @@ class TokenProviderSpec extends Specification {
             tokenProvider.getUserNameFromToken(token)
         then:
             TokenException e = thrown()
-            e.getMessage() == "Token must not be empty"
+            e.getMessage() == "Token is empty"
     }
 
     def "Should throw TokenException when token has wrong format"() {
@@ -88,15 +88,6 @@ class TokenProviderSpec extends Specification {
     def "Should return false when cache doesn't contain token"() {
         given:
             String token = "admin:600af495f01c54a2adade8b3e73856d5"
-        when:
-            boolean result = tokenProvider.validateToken(token)
-        then:
-            !result
-    }
-
-    def "Should "() {
-        given:
-            String token
         when:
             boolean result = tokenProvider.validateToken(token)
         then:
