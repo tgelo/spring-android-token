@@ -15,6 +15,10 @@ import java.util.UUID;
 public class TokenProvider {
 
     @Autowired
+    public TokenProvider(Cache<String, TokenAndAuthentication> cache) {
+        this.cache = cache;
+    }
+
     private Cache<String, TokenAndAuthentication> cache;
 
     public String createToken(String userName) {
