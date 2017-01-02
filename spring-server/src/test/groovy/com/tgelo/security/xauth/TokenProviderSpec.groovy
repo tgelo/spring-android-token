@@ -1,13 +1,15 @@
 package com.tgelo.security.xauth
 
-import spock.lang.Ignore
+import org.ehcache.Cache
 import spock.lang.Specification
 import spock.lang.Subject
 
 class TokenProviderSpec extends Specification {
 
+    private Cache<String, TokenAndAuthentication> cache = Mock(Cache)
+
     @Subject
-    private TokenProvider tokenProvider = new TokenProvider()
+    private TokenProvider tokenProvider = new TokenProvider(cache)
 
     def "Should compute signature when userName is filled"() {
         given:
@@ -86,10 +88,10 @@ class TokenProviderSpec extends Specification {
             e.getMessage() == "Token has wrong format"
     }
 
-    @Ignore
     def "Should return false when cache doesn't contain token"() {
         given:
             String token = "admin:600af495f01c54a2adade8b3e73856d5"
+            cache.containsKey("admin") >> false
         when:
             boolean result = tokenProvider.validateToken(token)
         then:
